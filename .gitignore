@@ -43,3 +43,4 @@ coverage.xml
 *.spec
 *.manifest
 image_c04de5.png
+.wrangler/state/
