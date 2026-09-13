@@ -1,38 +1,36 @@
 import { describe, it, expect } from "vitest";
 import app from "../src/index";
 
-const createMockEnv = (overrides = {}) => ({
-  DB: {
-    prepare: (_sql: string) => ({
-      bind: (..._args: any[]) => ({
-        first: async () => ({ avg: 72.5 }),
-        all: async () => {
-          if (_sql.includes("GROUP BY status")) {
-            return {
-              results: [
-                { status: "approved", count: 5 },
-                { status: "pending", count: 3 },
-                { status: "rejected", count: 2 },
-              ],
-            };
-          }
-          return { results: [] };
-        },
-        run: async () => ({}),
-      }),
+const createMockEnv = (overrides = {}) => {
+  const statement = {
+    bind: (..._args: any[]) => statement,
+    first: async () => ({ avg: 72.5 }),
+    all: async () => ({
+      results: [
+        { status: "approved", count: 5 },
+        { status: "pending", count: 3 },
+        { status: "rejected", count: 2 },
+      ],
     }),
-  } as any,
-  CACHE: {
-    get: async () => null,
-    put: async () => undefined,
-    delete: async () => undefined,
-  } as any,
-  ENVIRONMENT: "test",
-  ALLOWED_ORIGINS: "http://localhost:3000",
-  RATE_LIMIT_MAX: "100",
-  RATE_LIMIT_WINDOW: "60",
-  ...overrides,
-});
+    run: async () => ({}),
+  };
+
+  return {
+    DB: {
+      prepare: (_sql: string) => statement,
+    } as any,
+    CACHE: {
+      get: async () => null,
+      put: async () => undefined,
+      delete: async () => undefined,
+    } as any,
+    ENVIRONMENT: "test",
+    ALLOWED_ORIGINS: "http://localhost:3000",
+    RATE_LIMIT_MAX: "100",
+    RATE_LIMIT_WINDOW: "60",
+    ...overrides,
+  };
+};
 
 describe("GET /status", () => {
   it("returns pipeline status overview", async () => {
