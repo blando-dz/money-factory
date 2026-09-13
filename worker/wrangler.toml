@@ -1,0 +1,34 @@
+name = "money-factory"
+main = "src/index.ts"
+compatibility_date = "2025-09-13"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "money-factory-db"
+database_id = "REPLACE_WITH_DB_ID"
+
+# KV Namespace binding
+[[kv_namespaces]]
+binding = "CACHE"
+id = "REPLACE_WITH_KV_ID"
+
+# Environment variables (non-secret)
+[vars]
+ENVIRONMENT = "production"
+ALLOWED_ORIGINS = "https://money-factory.pages.dev,https://blando-dz.github.io"
+RATE_LIMIT_MAX = "100"
+RATE_LIMIT_WINDOW = "60"
+
+# Secrets (set via `wrangler secret put`):
+# - API_KEY_SECRET
+# - ORCHESTRATOR_URL
+
+# Observability
+[observability]
+enabled = true
+
+# Tracing
+[tracing]
+enabled = true
