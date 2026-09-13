@@ -9,8 +9,8 @@ const mockIdeas = [
 
 const createMockEnv = (overrides = {}) => ({
   DB: {
-    prepare: (sql: string) => ({
-      bind: (...args: any[]) => ({
+    prepare: (_sql: string) => ({
+      bind: (..._args: any[]) => ({
         first: async () => mockIdeas[0],
         all: async () => ({ results: mockIdeas }),
         run: async () => ({ meta: { last_row_id: 1 } }),

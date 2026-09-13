@@ -19,11 +19,11 @@ const createMockEnv = (overrides = {}) => {
   let insertCount = 0;
   return {
     DB: {
-      prepare: (sql: string) => ({
-        bind: (...args: any[]) => ({
+      prepare: (_sql: string) => ({
+        bind: (..._args: any[]) => ({
           first: async () => mockIdea,
           all: async () => {
-            if (sql.includes("SELECT agent_type")) {
+            if (_sql.includes("SELECT agent_type")) {
               return {
                 results: [
                   { agent_type: "market_intel", verdict: "approve" },

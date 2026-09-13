@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import app from "../src/index";
 
 const createMockEnv = (overrides = {}) => ({
   DB: {
-    prepare: (sql: string) => ({
-      bind: (...args: any[]) => ({
+    prepare: (_sql: string) => ({
+      bind: (..._args: any[]) => ({
         first: async () => ({ ok: 1 }),
         all: async () => ({ results: [] }),
         run: async () => ({

@@ -1,7 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import app from "../src/index";
 
-// Mock environment
 const createMockEnv = (overrides = {}) => ({
   DB: {
     prepare: () => ({

@@ -3,11 +3,11 @@ import app from "../src/index";
 
 const createMockEnv = (overrides = {}) => ({
   DB: {
-    prepare: (sql: string) => ({
-      bind: (...args: any[]) => ({
+    prepare: (_sql: string) => ({
+      bind: (..._args: any[]) => ({
         first: async () => ({ avg: 72.5 }),
         all: async () => {
-          if (sql.includes("GROUP BY status")) {
+          if (_sql.includes("GROUP BY status")) {
             return {
               results: [
                 { status: "approved", count: 5 },
