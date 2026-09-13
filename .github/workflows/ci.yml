@@ -24,7 +24,7 @@ jobs:
           cache-dependency-path: worker/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Type check
         run: npx tsc --noEmit
@@ -78,5 +78,5 @@ jobs:
       - name: Lint Worker
         working-directory: worker
         run: |
-          npm ci
+          npm ci --legacy-peer-deps
           npx tsc --noEmit

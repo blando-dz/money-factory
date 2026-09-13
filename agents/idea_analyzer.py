@@ -1,13 +1,13 @@
 """
-Idea Analyzer Agent — Validates ideas via Polymarket signals, competitor web search,
+Analyzes ideas for viability using market data, competitor news,
 and grounded citations. Scores viability/demand/competition, outputs PASS/REJECT.
 """
-import os
 import json
 import logging
+import os
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from dataclasses import dataclass, field, asdict
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 load_dotenv(r"C:\Users\Ghost\.env")
