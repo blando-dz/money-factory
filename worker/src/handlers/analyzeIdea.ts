@@ -22,7 +22,7 @@ export async function analyzeIdeaHandler(c: { env: Env; req: any; json: Function
     return c.json({ error: "Idea not found" }, 404);
   }
 
-  const body = await c.req.json<AnalysisRequest>();
+  const body = (await c.req.json()) as AnalysisRequest;
 
   if (!body.agent_type || !body.verdict) {
     return c.json({ error: "Missing required fields: agent_type, verdict" }, 400);

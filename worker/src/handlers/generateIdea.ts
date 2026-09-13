@@ -14,7 +14,7 @@ interface IdeaRequest {
 }
 
 export async function generateIdeaHandler(c: { env: Env; req: any; json: Function }) {
-  const body = await c.req.json<IdeaRequest>();
+  const body = (await c.req.json()) as IdeaRequest;
 
   // Validate required fields
   if (!body.title || !body.problem || !body.solution || !body.market_fit) {

@@ -1,24 +1,24 @@
 """Tests for Idea Factory Core — TDD approach."""
 from __future__ import annotations
 
+from datetime import datetime, timezone
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
-from datetime import datetime
 
 from agents.idea_factory import (
     RawSignal,
+    _compute_overall,
     _extract_problem_solution,
-    _score_novelty,
     _score_feasibility,
     _score_monetizability,
-    _compute_overall,
+    _score_novelty,
     _signals_to_idea,
     generate_ideas,
 )
 from api.models.idea import Citation, IdeaCreate
 from integrations.arxiv_client import ArxivPaper, fetch_arxiv_papers
 from integrations.rss_parser import RssEntry, parse_rss_feed
-
 
 # ============================================================
 # Unit Tests: Scoring Functions
@@ -144,7 +144,7 @@ class TestArxivClient:
         mock_paper.entry_id = "https://arxiv.org/abs/2401.00001"
         mock_paper.title = "Test Paper"
         mock_paper.summary = "This is a test summary about AI automation."
-        mock_published = datetime(2024, 1, 1)
+        mock_published = datetime(2024, 1, 1, tzinfo=timezone.utc)
         mock_paper.published = mock_published
         mock_paper.authors = [MagicMock(name="Author One")]
         mock_paper.categories = ["cs.AI"]
@@ -303,6 +303,7 @@ class TestAPI:
     @pytest.fixture(autouse=True)
     def setup(self):
         from fastapi.testclient import TestClient
+
         from core.database import Base, engine
         from main import create_app
 

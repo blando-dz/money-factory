@@ -10,7 +10,7 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 import httpx
 
@@ -64,7 +64,7 @@ class PipelineTask:
     agent_type: str
     payload: dict[str, Any]
     status: str = "pending"
-    result: Optional[dict[str, Any]] = None
+    result: dict[str, Any] | None = None
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
 
@@ -353,7 +353,7 @@ class Orchestrator:
 
 # ─── Singleton ──────────────────────────────────────────────────────
 
-_orchestrator: Optional[Orchestrator] = None
+_orchestrator: Orchestrator | None = None
 
 
 def get_orchestrator() -> Orchestrator:

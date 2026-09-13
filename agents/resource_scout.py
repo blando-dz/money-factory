@@ -2,13 +2,13 @@
 Resource Scout Agent — Scans free tier registries, matches OSS tools,
 calculates $0 cost path, checks API rate limits.
 """
-import os
 import logging
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from dataclasses import dataclass, field, asdict
-from typing import List, Optional, Dict, Any
+from typing import Any
 
 from dotenv import load_dotenv
+
 load_dotenv(r"C:\Users\Ghost\.env")
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ class FreeTierResource:
     url: str
     notes: str = ""
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
@@ -36,21 +36,21 @@ class OSSTool:
     stars: int = 0
     description: str = ""
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
 @dataclass
 class ResourceManifest:
     idea_id: str
-    resources: List[FreeTierResource]
-    oss_tools: List[OSSTool]
+    resources: list[FreeTierResource]
+    oss_tools: list[OSSTool]
     total_monthly_cost: float
-    cost_breakdown: Dict[str, float]
+    cost_breakdown: dict[str, float]
     feasibility: bool
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "idea_id": self.idea_id,
             "resources": [r.to_dict() for r in self.resources],
@@ -62,7 +62,7 @@ class ResourceManifest:
         }
 
 
-def web_search(query: str, limit: int = 5) -> Dict[str, Any]:
+def web_search(query: str, limit: int = 5) -> dict[str, Any]:
     """Wrapper for web search."""
     try:
         from hermes_tools import web_search as hs_search
@@ -79,7 +79,7 @@ class ResourceScout:
     """
 
     # Free tier registry — known generous free tiers
-    FREE_TIER_REGISTRY: List[Dict[str, str]] = [
+    FREE_TIER_REGISTRY: list[dict[str, str]] = [
         # Hosting
         {"name": "Vercel", "category": "hosting", "free_tier": "Hobby plan — 100GB bandwidth, unlimited sites", "rate_limit": "1000 requests/day", "url": "https://vercel.com/pricing"},
         {"name": "Cloudflare Pages", "category": "hosting", "free_tier": "Unlimited sites, 500 builds/month", "rate_limit": "Fair use", "url": "https://pages.cloudflare.com"},
@@ -118,7 +118,7 @@ class ResourceScout:
     ]
 
     # OSS tool registry
-    OSS_REGISTRY: List[Dict[str, Any]] = [
+    OSS_REGISTRY: list[dict[str, Any]] = [
         # Frontend
         {"name": "Next.js", "category": "frontend", "url": "https://nextjs.org", "license": "MIT", "stars": 125000, "description": "React framework"},
         {"name": "Svelte", "category": "frontend", "url": "https://svelte.dev", "license": "MIT", "stars": 78000, "description": "Compile-time reactive UI"},
@@ -165,11 +165,11 @@ class ResourceScout:
         "devops": "devops",
     }
 
-    def get_free_tier_registry(self) -> List[FreeTierResource]:
+    def get_free_tier_registry(self) -> list[FreeTierResource]:
         """Return the free tier registry as typed objects."""
         return [FreeTierResource(**r) for r in self.FREE_TIER_REGISTRY]
 
-    def get_oss_registry(self) -> List[OSSTool]:
+    def get_oss_registry(self) -> list[OSSTool]:
         """Return the OSS tool registry as typed objects."""
         return [OSSTool(**t) for t in self.OSS_REGISTRY]
 
@@ -178,7 +178,7 @@ class ResourceScout:
         idea_id: str,
         title: str,
         description: str,
-        stack_layers: List[str]
+        stack_layers: list[str]
     ) -> ResourceManifest:
         """
         Scout free resources and OSS tools for an idea.
@@ -212,7 +212,7 @@ class ResourceScout:
 
         return manifest
 
-    def scan_free_tiers(self, categories: List[str]) -> List[FreeTierResource]:
+    def scan_free_tiers(self, categories: list[str]) -> list[FreeTierResource]:
         """Scan free tier resources matching the given categories."""
         results = []
         for cat in categories:
@@ -221,7 +221,7 @@ class ResourceScout:
                     results.append(FreeTierResource(**resource_dict))
         return results
 
-    def match_oss_tools(self, stack_layers: List[str]) -> List[OSSTool]:
+    def match_oss_tools(self, stack_layers: list[str]) -> list[OSSTool]:
         """Match OSS tools to stack layers."""
         results = []
         seen_categories = set()
@@ -235,7 +235,7 @@ class ResourceScout:
                     results.append(OSSTool(**tool_dict))
         return results
 
-    def _resolve_categories(self, stack_layers: List[str]) -> List[str]:
+    def _resolve_categories(self, stack_layers: list[str]) -> list[str]:
         """Resolve stack layers to free tier categories."""
         categories = set()
         for layer in stack_layers:
@@ -244,7 +244,7 @@ class ResourceScout:
                 categories.add(cat)
         return list(categories)
 
-    def _calculate_cost(self, resources: List[FreeTierResource], estimated_usage: Dict[str, str] = None) -> float:
+    def _calculate_cost(self, resources: list[FreeTierResource], estimated_usage: dict[str, str] | None = None) -> float:
         """Calculate total monthly cost. Free tiers = $0."""
         if estimated_usage is None:
             estimated_usage = {}
@@ -257,7 +257,7 @@ class ResourceScout:
                     total += 7.0  # Upgrade cost
         return total
 
-    def _calculate_cost_detailed(self, resources: List[FreeTierResource]) -> tuple:
+    def _calculate_cost_detailed(self, resources: list[FreeTierResource]) -> tuple:
         """Calculate detailed cost breakdown. Returns (total, breakdown)."""
         breakdown = {}
         total = 0.0
@@ -271,10 +271,10 @@ class ResourceScout:
 
     def _check_feasibility(
         self,
-        resources: List[FreeTierResource],
-        needed_categories: List[str],
-        oss_tools: List[OSSTool],
-        stack_layers: List[str]
+        resources: list[FreeTierResource],
+        needed_categories: list[str],
+        oss_tools: list[OSSTool],
+        stack_layers: list[str]
     ) -> bool:
         """
         Check if the idea can be built for $0.
@@ -308,7 +308,7 @@ class ResourceScout:
                 return r["rate_limit"]
         return "Check provider docs"
 
-    def _get_known_free_tiers(self) -> Dict[str, List[str]]:
+    def _get_known_free_tiers(self) -> dict[str, list[str]]:
         """Return a dict of category -> list of known free tier providers."""
         result = {}
         for r in self.FREE_TIER_REGISTRY:

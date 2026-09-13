@@ -1,13 +1,11 @@
 """
 FastAPI application for Money Factory Analyzer + Scout agents.
 """
-import os
 import logging
-from typing import Optional
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-from dotenv import load_dotenv
 
 load_dotenv(r"C:\Users\Ghost\.env")
 

@@ -2,8 +2,8 @@
 from api.main import (
     analyze_idea,
     get_analysis,
-    scout_resources,
     get_resources,
+    scout_resources,
 )
 
-__all__ = ["analyze_idea", "get_analysis", "scout_resources", "get_resources"]
+__all__ = ["analyze_idea", "get_analysis", "get_resources", "scout_resources"]

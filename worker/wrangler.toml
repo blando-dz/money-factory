@@ -7,12 +7,12 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "money-factory-db"
-database_id = "REPLACE_WITH_DB_ID"
+database_id = "59bac3e7-9cb8-4ed6-b0c5-5f4f9abb9762"
 
 # KV Namespace binding
 [[kv_namespaces]]
 binding = "CACHE"
-id = "REPLACE_WITH_KV_ID"
+id = "252d30c21a61476596ebedb34090652b"
 
 # Environment variables (non-secret)
 [vars]

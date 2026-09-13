@@ -2,15 +2,15 @@
 Database storage layer for Money Factory.
 Saves analysis results and resource manifests to SQLite.
 """
-import os
 import json
-import sqlite3
 import logging
-from datetime import datetime
+import os
+import sqlite3
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Any
 
 from dotenv import load_dotenv
+
 load_dotenv(r"C:\Users\Ghost\.env")
 
 logger = logging.getLogger(__name__)
@@ -96,7 +96,7 @@ def save_analysis(analysis_result) -> bool:
         return False
 
 
-def get_analysis(idea_id: str) -> Optional[Dict[str, Any]]:
+def get_analysis(idea_id: str) -> dict[str, Any] | None:
     """Retrieve the latest analysis for an idea_id."""
     try:
         conn = _get_db()
@@ -153,7 +153,7 @@ def save_resources(resource_manifest) -> bool:
         return False
 
 
-def get_resources(idea_id: str) -> Optional[Dict[str, Any]]:
+def get_resources(idea_id: str) -> dict[str, Any] | None:
     """Retrieve the latest resource manifest for an idea_id."""
     try:
         conn = _get_db()

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 import feedparser
@@ -45,7 +45,7 @@ def parse_rss_feed(url: str) -> list[RssEntry]:
         published = ""
         if hasattr(entry, "published_parsed") and entry.published_parsed:
             try:
-                published = datetime(*entry.published_parsed[:6]).isoformat()
+                published = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc).isoformat()
             except (TypeError, ValueError):
                 published = getattr(entry, "published", "")
         else:

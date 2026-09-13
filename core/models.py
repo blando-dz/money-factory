@@ -1,7 +1,7 @@
 """SQLAlchemy ORM model for Idea table."""
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Float, Integer, String, Text, JSON
+from sqlalchemy import JSON, Column, DateTime, Float, Integer, String, Text
 
 from core.database import Base
 

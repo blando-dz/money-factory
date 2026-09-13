@@ -6,9 +6,10 @@ import json
 import logging
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 logger = logging.getLogger(__name__)
@@ -179,7 +180,7 @@ class IdeaAnalyzer:
                 high_prob = max(float(p) for p in prices) if prices else 0
                 volume_factor = min(volume / 1_000_000, 1.0)  # Cap at $1M volume
 
-                demand = int((high_prob * 70 + volume_factor * 30))
+                demand = int(high_prob * 70 + volume_factor * 30)
                 max_demand = max(max_demand, demand)
             except (ValueError, TypeError):
                 continue
@@ -222,7 +223,7 @@ class IdeaAnalyzer:
         """
         # Invert competition (low competition is good)
         competition_inverted = 100 - competition_score
-        viability = int((demand_score * 0.6 + competition_inverted * 0.4))
+        viability = int(demand_score * 0.6 + competition_inverted * 0.4)
 
         # Boost if sources exist (verifiable)
         if has_sources:
