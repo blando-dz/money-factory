@@ -4,13 +4,12 @@ and grounded citations. Scores viability/demand/competition, outputs PASS/REJECT
 """
 import json
 import logging
-import os
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from dotenv import load_dotenv
-load_dotenv(r"C:\Users\Ghost\.env")
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -24,15 +23,15 @@ class AnalysisResult:
     competition_score: int  # 0-100
     decision: str  # PASS or REJECT
     confidence: float  # 0.0-1.0
-    sources: List[str] = field(default_factory=list)
+    sources: list[str] = field(default_factory=list)
     reasoning: str = ""
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
-def web_search(query: str, limit: int = 5) -> Dict[str, Any]:
+def web_search(query: str, limit: int = 5) -> dict[str, Any]:
     """
     Wrapper for web search. In production this calls Hermes web_search;
     here we provide a mockable function for testing.
@@ -46,7 +45,7 @@ def web_search(query: str, limit: int = 5) -> Dict[str, Any]:
         return {"data": {"web": []}}
 
 
-def polymarket_search(query: str) -> Dict[str, Any]:
+def polymarket_search(query: str) -> dict[str, Any]:
     """
     Search Polymarket for related markets using the CLOB/Gamma public API.
     No authentication required.
@@ -131,17 +130,17 @@ class IdeaAnalyzer:
 
         return result
 
-    def search_competitors(self, title: str, category: str) -> Dict[str, Any]:
+    def search_competitors(self, title: str, category: str) -> dict[str, Any]:
         """Search for existing products and competitors."""
         query = f"{title} {category} competitors products alternatives"
         return web_search(query, limit=8)
 
-    def check_polymarket(self, title: str, category: str) -> Dict[str, Any]:
+    def check_polymarket(self, title: str, category: str) -> dict[str, Any]:
         """Check Polymarket for demand signals."""
         query = f"{title} {category}"
         return polymarket_search(query)
 
-    def _extract_sources_from_search(self, search_results: Dict[str, Any]) -> List[str]:
+    def _extract_sources_from_search(self, search_results: dict[str, Any]) -> list[str]:
         """Extract URLs from search results for grounded citations."""
         sources = []
         if "data" in search_results and "web" in search_results["data"]:
@@ -151,7 +150,7 @@ class IdeaAnalyzer:
                     sources.append(url)
         return sources
 
-    def _extract_sources_from_polymarket(self, poly_data: Dict[str, Any]) -> List[str]:
+    def _extract_sources_from_polymarket(self, poly_data: dict[str, Any]) -> list[str]:
         """Extract Polymarket market URLs as sources."""
         sources = []
         for market in poly_data.get("markets", []):
@@ -160,7 +159,7 @@ class IdeaAnalyzer:
                 sources.append(f"https://polymarket.com/event/{slug}")
         return sources
 
-    def _score_demand(self, markets: List[Dict]) -> int:
+    def _score_demand(self, markets: list[dict]) -> int:
         """
         Score demand (0-100) based on Polymarket market signals.
         High-probability markets with volume indicate real demand.
@@ -187,21 +186,7 @@ class IdeaAnalyzer:
 
         return max(max_demand, 30)
 
-    def _score_competition_from_search(self, search_results: Dict[str, Any]) -> int:
-        """Score competition based on web search results."""
-        web_results = search_results.get("data", {}).get("web", [])
-        n = len(web_results)
-
-        if n == 0:
-            return 50  # Unknown competition
-        elif n <= 2:
-            return 25  # Low competition
-        elif n <= 5:
-            return 55  # Medium competition
-        else:
-            return 85  # High competition
-
-    def _score_competition(self, search_results: Dict[str, Any]) -> int:
+    def _score_competition(self, search_results: dict[str, Any]) -> int:
         """Score competition (0-100, higher = more competitive = worse)."""
         web_results = search_results.get("data", {}).get("web", [])
         n = len(web_results)
@@ -245,7 +230,7 @@ class IdeaAnalyzer:
 
         return max(min(viability, 100), 0)
 
-    def _calculate_confidence(self, sources: List[str], markets: List[Dict]) -> float:
+    def _calculate_confidence(self, sources: list[str], markets: list[dict]) -> float:
         """Calculate confidence score based on data quality."""
         score = 0.3  # Base confidence
 
@@ -280,7 +265,7 @@ class IdeaAnalyzer:
         demand: int,
         competition: int,
         decision: str,
-        poly_data: Dict[str, Any]
+        poly_data: dict[str, Any]
     ) -> str:
         """Build human-readable reasoning for the decision."""
         parts = [f"Analysis of '{title}':"]
@@ -317,7 +302,7 @@ class IdeaAnalyzer:
             logger.warning(f"Failed to save analysis to DB: {e}")
 
     # Legacy/compat methods for test suite
-    def _extract_sources(self, query: str) -> List[str]:
+    def _extract_sources(self, query: str) -> list[str]:
         """Legacy method for extracting sources from a query."""
         results = web_search(query)
         return self._extract_sources_from_search(results)
